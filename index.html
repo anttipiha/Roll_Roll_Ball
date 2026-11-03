@@ -778,6 +778,13 @@ body.phone h1{white-space:normal;font-size:24px}
         <div class="cashbar" aria-hidden="true">CASH TOTAL <b>$ <span id="credits2">1,000</span></b><span id="dealAmt" class="betsum"></span></div>
       </div>
 
+      <div class="belowbar" id="belowbar">
+        <div class="hbtns"><button class="ghost" id="statsBtn" type="button">Statistics</button><button class="ghost" id="setBtn" type="button">Settings</button></div>
+        <dl class="meters">
+          <div><dt>Cash total</dt><dd id="credits">$ 1,000</dd></div>
+          <div><dt>On the table</dt><dd id="total">0</dd></div>
+        </dl>
+      </div>
       <div id="guideSlot"></div>
       <div class="readout" aria-live="polite">
         <p class="why" id="dealerWhy"></p>
@@ -793,13 +800,6 @@ body.phone h1{white-space:normal;font-size:24px}
       <div class="mybets">
         <h2>My bets <span id="mybTot"></span></h2>
         <div class="slip" id="slip"></div>
-      </div>
-      <div class="belowbar" id="belowbar">
-        <div class="hbtns"><button class="ghost" id="statsBtn" type="button">Statistics</button><button class="ghost" id="setBtn" type="button">Settings</button></div>
-        <dl class="meters">
-          <div><dt>Cash total</dt><dd id="credits">$ 1,000</dd></div>
-          <div><dt>On the table</dt><dd id="total">0</dd></div>
-        </dl>
       </div>
       <details class="blist" id="blist"><summary>Bet list (an alternative to tapping the board)</summary><div class="bets2"><div><h2>Bets</h2><div class="grid g3" id="gBets"></div></div></div></details>
     </section>
@@ -2140,7 +2140,10 @@ async function askHalf(i,my){
 async function sevenIntro(my){
   const on=()=>my===introTok&&phase==='idle'&&ready;
   const hub=()=>$$('#board .tile.hubtile'), sv=id=>$$('#board .tile.spoke7[data-bet="'+id+'"]');
-  const pop=(els,ms)=>{ els.forEach(e=>{ e.style.transformBox='fill-box'; e.style.transformOrigin='center'; if(!skip&&e.animate){ const up={transform:'scale(1.5)',filter:'drop-shadow(0 6px 6px rgba(0,0,0,.65))'}; e.animate([{transform:'scale(1)',filter:'none'},Object.assign({offset:.3},up),Object.assign({offset:.8},up),{transform:'scale(1)',filter:'none'}],{duration:ms,easing:'ease-in-out'}); } e.classList.add('tourhl'); setTimeout(()=>e.classList.remove('tourhl'),ms); }); };
+  const pop=(els,ms)=>{ els.slice().sort((x,y)=>(x.classList.contains('hubtile')?1:0)-(y.classList.contains('hubtile')?1:0)).forEach(e=>{ if(e.parentNode) e.parentNode.appendChild(e); });   /* the growing pieces lie on top of the sectors beside them, the hub on top of everything */
+  $$('#board .tile.hubtile').forEach(h=>{ if(h.parentNode&&h.parentNode.lastElementChild!==h) h.parentNode.appendChild(h); });   /* ...also when only a seven grows: it never covers the Any Seven hub */
+  els.forEach(e=>{ e.style.transformBox='fill-box'; e.style.transformOrigin='center';
+ if(!skip&&e.animate){ const up={transform:'scale(1.5)',filter:'drop-shadow(0 6px 6px rgba(0,0,0,.65))'}; e.animate([{transform:'scale(1)',filter:'none'},Object.assign({offset:.3},up),Object.assign({offset:.8},up),{transform:'scale(1)',filter:'none'}],{duration:ms,easing:'ease-in-out'}); } e.classList.add('tourhl'); setTimeout(()=>e.classList.remove('tourhl'),ms); }); };
   const say=(yellow,text)=>dealerSay(yellow,'',[[text.replace(/\u2014/g,', '),.85,1.08]],text);
   let sp=say('SEVENS','You can bet on Sevens!');
   pop(hub().concat(['h7','s7','d7','c7'].reduce((a,id)=>a.concat(sv(id)),[])),1700);
