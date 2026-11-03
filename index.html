@@ -8,6 +8,11 @@
 body.fpflying #ready .wt{animation:none!important;opacity:0!important}
 @media (prefers-reduced-motion: reduce){#ready.nudge .wt,#ready.hint .wt{animation:none}}
 </style>
+<style id="belowbar-css">
+/* desktop: Statistics, Settings, the speaker, Cash total and On the table sit in one row under the table */
+.belowbar{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:12px 0 4px;padding-left:58px;min-height:46px}
+.belowbar .meters{margin-left:auto}
+</style>
 </head><body>
 <title>RollBall_Desktop_NOW</title>
 <style id="embedded-fonts">
@@ -395,6 +400,8 @@ td.n{font-family:var(--font-mono)}
 .cline{position:absolute;right:1.2%;left:auto;width:auto;top:18.7%;z-index:3;display:flex;justify-content:center;align-items:baseline;gap:.9cqw;padding:.45cqw .9cqw;background:rgba(10,4,20,.55);border:1px solid rgba(255,255,255,.18);border-radius:1.3cqw;opacity:0;transition:opacity .25s;pointer-events:none;font:400 2.35cqw/1 var(--font-display);color:#fff;-webkit-text-stroke:.12cqw #000;paint-order:stroke fill;text-shadow:0 .25cqw 0 #000}
 .cline.show{opacity:1}
 .cline em{font-style:normal;color:#ffe53b}
+.cline .cv .cs{font:700 1.05em Arial,'Segoe UI Symbol',sans-serif;margin-left:.08em;color:#fff}
+.cline .cv .cs.red{color:#ff4d5e}
 .cline .cv i{font:700 .8em var(--font-body);font-style:normal;color:#9fd4ff;margin-right:.12em}
 .stage.phone .cline{left:2%;right:auto;width:37%;top:18.5%;font-size:5.6cqw;gap:1.4cqw}
 .recent{margin-top:6px;font:500 13px var(--font-mono);color:var(--ink)}
@@ -727,11 +734,6 @@ body.phone h1{white-space:normal;font-size:24px}
         <p class="tag">Three cards, eight wheel sectors, and a ball that may or may not roll.</p>
       </div>
     </div>
-    <div class="hbtns"><button class="ghost" id="statsBtn" type="button">Statistics</button><button class="ghost" id="setBtn" type="button">Settings</button></div>
-    <dl class="meters">
-      <div><dt>Cash total</dt><dd id="credits">$ 1,000</dd></div>
-      <div><dt>On the table</dt><dd id="total">0</dd></div>
-    </dl>
   </header>
 
   <main class="game">
@@ -791,6 +793,13 @@ body.phone h1{white-space:normal;font-size:24px}
       <div class="mybets">
         <h2>My bets <span id="mybTot"></span></h2>
         <div class="slip" id="slip"></div>
+      </div>
+      <div class="belowbar" id="belowbar">
+        <div class="hbtns"><button class="ghost" id="statsBtn" type="button">Statistics</button><button class="ghost" id="setBtn" type="button">Settings</button></div>
+        <dl class="meters">
+          <div><dt>Cash total</dt><dd id="credits">$ 1,000</dd></div>
+          <div><dt>On the table</dt><dd id="total">0</dd></div>
+        </dl>
       </div>
       <details class="blist" id="blist"><summary>Bet list (an alternative to tapping the board)</summary><div class="bets2"><div><h2>Bets</h2><div class="grid g3" id="gBets"></div></div></div></details>
     </section>
@@ -1848,7 +1857,7 @@ function doClear(){
 }
 function randomPlay(){
   if(phase!=='idle'||!ready||tableBusy) return;
-  tourCancel();
+  introAbort(); demoSaved=null; tourCancel();   /* the walk-through and anything the dealer was still saying stop here: only the Random 100$ line is spoken, then the round starts */
   if(settled){ quietIdle=true; try{ resetResult(); }finally{ quietIdle=false; } }
   if(balance<100){ say('Not enough credits for 10 x 10$.','Top up or use smaller bets.'); render(); return; }
   const pool=BETS.filter(b=>!stakes[b.id]&&!carry[b.id]);
@@ -1938,7 +1947,8 @@ async function dealExtra(extra){
 }
 let curHand=[{r:0},{r:0},{r:0}];
 const cvals=[null,null,null];
-function clineSet(i,r){ cvals[i]=r; const el=$('#cline'); if(!el) return; el.innerHTML=cvals.map((v,k)=>v==null?'':'<span class="cv">'+v+'</span>').filter(Boolean).join(''); el.classList.add('show'); el.setAttribute('aria-label','Cards: '+cvals.filter(v=>v!=null).join(', ')); }
+const csuits=[null,null,null], CSUITG=['\u2660\uFE0E','\u2665\uFE0E','\u2666\uFE0E','\u2663\uFE0E'];
+function clineSet(i,r,s){ cvals[i]=r; csuits[i]=(s==null?null:s); const el=$('#cline'); if(!el) return; el.innerHTML=cvals.map((v,k)=>v==null?'':'<span class="cv">'+v+(csuits[k]==null?'':'<b class="cs'+(csuits[k]===1||csuits[k]===2?' red':'')+'">'+CSUITG[csuits[k]]+'</b>')+'</span>').filter(Boolean).join(''); el.classList.add('show'); el.setAttribute('aria-label','Cards: '+cvals.filter(v=>v!=null).join(', ')); }
 function clineClear(){ cvals[0]=cvals[1]=cvals[2]=null; const el=$('#cline'); if(el){ el.innerHTML=''; el.classList.remove('show'); } }
 const bfCache={};
 function bigFace(key){
@@ -1972,14 +1982,14 @@ async function dealerShuffle(n){
 async function showCard(i,card){
   const im=$('#cardimg'+i), key=['Spades','Hearts','Diamonds','Clubs'][card.s]+RANK[card.r], face=await bigFace(key);
   im.classList.remove('up');
-  if(reduce||!im.animate){ im.setAttribute('href',face); im.classList.add('up'); clineSet(i,card.r); return; }
+  if(reduce||!im.animate){ im.setAttribute('href',face); im.classList.add('up'); clineSet(i,card.r,card.s); return; }
   im.setAttribute('href',CARDBACK); im.classList.add('up');
   setPose(true); sfx('deal');
   const dx=1002-SLOTX[i]-31, dy=205-224;
   await im.animate([{transform:'translate('+dx+'px,'+dy+'px) scale(.5)',opacity:0},{opacity:1,offset:.2},{transform:'none',opacity:1}],{duration:380,easing:'ease-out'}).finished;
   setPose(false);
   await im.animate([{transform:'scaleX(1)'},{transform:'scaleX(0)'}],{duration:130}).finished;
-  im.setAttribute('href',face); sfx('flip'); clineSet(i,card.r);
+  im.setAttribute('href',face); sfx('flip'); clineSet(i,card.r,card.s);
   await im.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:130}).finished;
   if(zoomOn){
     const Z='translate(0px,-62px) scale(3)';
@@ -2725,7 +2735,7 @@ updateZoomBtn();
 $('#speedBtn').addEventListener('click',()=>{ speed=speed==='fast'?'normal':'fast'; updateSpeedBtn(); save(); });
 $('#skip').addEventListener('click',doSkip);
 $('#again').addEventListener('click',sameAgain);
-$('#rand2').addEventListener('click',async()=>{ if(phase!=='idle'||ready||tableBusy) return; $('#ready').click(); let n=0; while(tableBusy&&n++<200) await sleep(100); randomPlay(); });
+$('#rand2').addEventListener('click',async()=>{ if(phase!=='idle'||ready||tableBusy) return; { const q=quietIdle; quietIdle=true; try{ $('#ready').click(); }finally{ quietIdle=q; } } let n=0; while(tableBusy&&n++<200) await sleep(100); randomPlay(); });
 $('#leave').addEventListener('click',leaveTable);
 $('#gskip').addEventListener('click',()=>{ tutDone=true; save(); render(); });
 $('#setBody').addEventListener('click',e=>{
@@ -2771,7 +2781,7 @@ async function resetTable(){
   tableBusy=false; render();
 }
 $('#deal').addEventListener('click',deal);
-$('#rand').addEventListener('click',async()=>{ if(phase!=='idle'||tableBusy) return; if(!ready){ $('#ready').click(); let n=0; while(tableBusy&&n++<200) await sleep(100); } randomPlay(); });
+$('#rand').addEventListener('click',async()=>{ if(phase!=='idle'||tableBusy) return; if(!ready){ { const q=quietIdle; quietIdle=true; try{ $('#ready').click(); }finally{ quietIdle=q; } } let n=0; while(tableBusy&&n++<200) await sleep(100); } randomPlay(); });
 $('#factBtn').addEventListener('click',tellFact);
 $('#factfx').addEventListener('click',()=>{ factTok++; factClose(); });
 $('#showDemoBtn').addEventListener('click',()=>{
@@ -3313,7 +3323,9 @@ setInterval(()=>{
   function dockPos(){
     var st=document.getElementById('stage'), sr=st?st.getBoundingClientRect():{left:0,top:0}, top0=(sr.top+scrollY);
     var x,y;
-    if(sr.left>=SMALL+14){ x=Math.round((sr.left-SMALL)/2); y=Math.round(top0+10); }
+    var bar=document.getElementById('belowbar');
+    if(bar){ var br=bar.getBoundingClientRect(); x=Math.round(br.left+scrollX+4); y=Math.round(br.top+scrollY+(br.height-SMALL)/2); }
+    else if(sr.left>=SMALL+14){ x=Math.round((sr.left-SMALL)/2); y=Math.round(top0+10); }
     else { x=innerWidth-SMALL-8; y=3; }
     return [x,y];
   }
