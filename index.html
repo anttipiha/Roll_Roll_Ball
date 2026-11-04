@@ -15,6 +15,7 @@ body.fpflying #ready .wt{animation:none!important;opacity:0!important}
 </style>
 <style id="rr-css">.rr{margin:0 0 6px}.rr summary{list-style:revert;display:list-item;padding:11px 0;cursor:pointer}.rr:not([open]) summary{opacity:.95}.rr .readout{border:0;background:none;padding:0 0 10px;min-height:0}.cashrow:not(:has(button:not([hidden]))){display:none}</style>
 <style id="factnav-css">.factnav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:44px;height:44px;border-radius:50%;border:2px solid #ffe53b;background:rgba(10,4,32,.82);color:#ffe53b;font:700 30px/1 Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;padding:0 0 3px;cursor:pointer;transition:background .15s,opacity .15s}.factnav:hover:not(:disabled){background:#ffe53b;color:#0a0420}.factnav:disabled{opacity:.28;cursor:default}.factnav.fprev{left:8px}.factnav.fnext{right:8px}.stage.phone .factnav{width:34px;height:34px;font-size:24px;top:calc(50% - 4px)}.stage.phone .factnav.fprev{left:4px}.stage.phone .factnav.fnext{right:4px}</style>
+<style id="mw-css">.mwg{transition:transform 1.3s ease}.mwg.big{transform:scale(1.22);transition-duration:.7s}.cardlab{transition:transform 1.3s ease}.mwg.big .cardlab{transform:translateY(-8px) scale(1.75);transition-duration:.7s}.mwframe{fill:rgba(10,4,32,.3);stroke:#fff;stroke-width:3.5;opacity:0;transition:opacity 2.6s ease;pointer-events:none}.mwg.big .mwframe{opacity:1;transition-duration:.5s}.mwsel{fill:none;stroke:#fff;stroke-width:4.5;stroke-linejoin:round;pointer-events:none;opacity:1;filter:drop-shadow(0 0 4px rgba(255,255,255,.9));transition:opacity 2.6s ease}.mwsel.off{opacity:0}.mwflash{fill:#fff;fill-opacity:0;pointer-events:none;animation:mwfl .9s ease-in-out 2}@keyframes mwfl{0%,100%{fill-opacity:0}50%{fill-opacity:.62}}#board:has(.mwg.big) .helpq{opacity:0;transition:opacity .3s}.helpq{transition:opacity 1.2s}@media (prefers-reduced-motion: reduce){.mwg{transition:none}.mwflash{animation-iteration-count:1}}</style>
 </head><body>
 <title>RollBall_Desktop_NOW</title>
 <style id="embedded-fonts">
@@ -1308,14 +1309,15 @@ const RBLOGO='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhm
     const P=(r,a)=>[m.x+r*Math.cos(a*Math.PI/180),m.y+r*Math.sin(a*Math.PI/180)];
     const sec=(r0,r1,a0,a1)=>{ const f=(r,a)=>P(r,a).map(v=>v.toFixed(1)).join(' '); return 'M'+f(r1,a0)+' A'+r1+' '+r1+' 0 0 1 '+f(r1,a1)+' L'+f(r0,a1)+' A'+r0+' '+r0+' 0 0 0 '+f(r0,a0)+'Z'; };
     const st='style="font-size:21px;font-weight:800;fill-opacity:1"';
-    let o=help?'<g class="helpzone" data-help="3">':'<g>';
-    o+='<text class="binfo2 cardlab" id="'+pre+'card" x="'+m.x+'" y="'+(m.y-m.r-80)+'" style="font-size:32px;font-weight:800;fill-opacity:1;text-anchor:middle"></text>';
+    let o='<g class="mwg" id="mwg_'+pre+'" style="transform-origin:'+m.x+'px '+(m.y-28)+'px"><rect class="mwframe" x="'+(m.x-82)+'" y="'+(m.y-214)+'" width="164" height="371" rx="16"/>';
+    o+=help?'<g class="helpzone" data-help="3">':'<g>';
+    o+='<text class="binfo2 cardlab" id="'+pre+'card" x="'+m.x+'" y="'+(m.y-m.r-80)+'" style="transform-origin:'+m.x+'px '+(m.y-m.r-80)+'px;font-size:32px;font-weight:800;fill-opacity:1;text-anchor:middle"></text>';
     o+=lab.map((t,i)=>'<text class="binfo2" '+st+' x="'+m.x+'" y="'+(m.y-m.r-52+i*22.5)+'">'+t+'</text>').join('');
-    WHEEL.forEach(k=>{ const w=WANG[k]; o+='<path class="wedge '+(SBY[k].red?'wr':'wb')+'" d="'+sec(16,m.r,w[0],w[1])+'"/>'; });
-    Object.keys(SPOKE).forEach(id=>{ o+='<path class="mspoke" d="'+sec(16,m.r,SPOKE[id]-7,SPOKE[id]+7)+'"/>'; });
+    WHEEL.forEach(k=>{ const w=WANG[k]; o+='<path class="wedge '+(SBY[k].red?'wr':'wb')+'" data-k="'+k+'" d="'+sec(16,m.r,w[0],w[1])+'"/>'; });
+    Object.keys(SPOKE).forEach(id=>{ o+='<path class="mspoke" data-s="'+id+'" d="'+sec(16,m.r,SPOKE[id]-7,SPOKE[id]+7)+'"/>'; });
     o+='<circle class="rim" cx="'+m.x+'" cy="'+m.y+'" r="'+m.r+'"/><circle class="mhub" cx="'+m.x+'" cy="'+m.y+'" r="16"/><circle id="'+pre+'pin" class="ballpin" r="10" cx="'+m.x+'" cy="'+m.y+'" visibility="hidden"/></g>';
     [0,1,2].forEach(i=>{ o+='<text class="binfo2 ballw" id="'+pre+'w'+i+'" style="font-size:20px;font-weight:800;fill-opacity:1" x="'+m.x+'" y="'+(m.y+m.r+27+i*23)+'"></text>'; });
-    return o; };
+    return o+'</g>'; };
   s+=miniWheel(MW.ball,'ball',['LAST','ROUND’S','3RD CARD'],true);
   s+=miniWheel(MW.nw,'new',['NEW','ROUND’S','1ST CARD'],false);
   s+='<g class="helpq" data-help="3" tabindex="0" role="button" aria-label="How does the ball roll? Watch the demo"><circle cx="478" cy="600" r="15" fill="#ffe45c" stroke="#2a1500" stroke-width="2.5" style="fill:#ffe45c;stroke:#2a1500"/><text x="478" y="607" fill="#2a1500" text-anchor="middle" font-size="19" font-weight="800" font-family="Arial,sans-serif" style="fill:#2a1500;font-family:Arial,sans-serif">?</text><title>How does the ball roll? Watch the demo</title></g><g class="helpq" data-help="2" tabindex="0" role="button" aria-label="Roll bets: watch the demo"><circle cx="880" cy="254" r="15" fill="#ffe45c" stroke="#2a1500" stroke-width="2.5" style="fill:#ffe45c;stroke:#2a1500"/><text x="880" y="261" fill="#2a1500" text-anchor="middle" font-size="19" font-weight="800" font-family="Arial,sans-serif" style="fill:#2a1500;font-family:Arial,sans-serif">?</text><title>Roll bets: watch the demo</title></g><g class="helpq" data-help="2" tabindex="0" role="button" aria-label="Roll bets: watch the demo"><circle cx="1171" cy="254" r="15" fill="#ffe45c" stroke="#2a1500" stroke-width="2.5" style="fill:#ffe45c;stroke:#2a1500"/><text x="1171" y="261" fill="#2a1500" text-anchor="middle" font-size="19" font-weight="800" font-family="Arial,sans-serif" style="fill:#2a1500;font-family:Arial,sans-serif">?</text><title>Roll bets: watch the demo</title></g>';
@@ -1336,7 +1338,23 @@ function updNew(c,i){   // the new round's 1st card: its suit and value above th
 }
 /* the LAST ROUND'S 3rd CARD wheel changes only when a new round starts (Ready or Deal), not when the dealer has just turned the 3rd card */
 let shownBall;
-function syncLast(){ shownBall=ball; updBoard(); updNew(null); }
+function syncLast(){ shownBall=ball; updBoard(); updNew(null); mwFocus(false); }
+/* Roll or no roll: the two small wheels (last round's 3rd card, new round's 1st card) get a white frame and grow; the card's sector blinks softly when the dealer names it; at the end they shrink back and the frames fade out slowly */
+function mwFocus(on){
+  ['ball','new'].forEach(p=>{ const g=document.getElementById('mwg_'+p); if(!g) return; g.classList.toggle('big',!!on);
+    if(!on) g.querySelectorAll('.mwsel').forEach(e=>{ e.classList.add('off'); setTimeout(()=>{ try{ e.remove(); }catch(x){} },2800); }); });   /* the white sector outlines fade out slowly with the frames */
+}
+function mwFlash(pre,c){
+  const g=document.getElementById('mwg_'+pre); if(!g||!c) return; let el;
+  if(c.r===7) el=g.querySelector('.mspoke[data-s="'+['s7','h7','d7','c7'][c.s]+'"]');
+  else el=g.querySelector('.wedge[data-k="'+((isRed(c)?'R':'B')+(ODDV.indexOf(c.r)>-1?'O':'E')+(c.r<7?'S':'B'))+'"]');
+  if(!el) return;
+  const o=document.createElementNS('http://www.w3.org/2000/svg','path'); o.setAttribute('d',el.getAttribute('d')); o.setAttribute('class','mwflash');
+  const pin=document.getElementById(pre+'pin'); if(pin&&pin.parentNode) pin.parentNode.insertBefore(o,pin); else g.appendChild(o);
+  g.querySelectorAll('.mwsel').forEach(e=>e.remove());   /* the named sector keeps a white outline until the roll or no roll part is over */
+  const ol=document.createElementNS('http://www.w3.org/2000/svg','path'); ol.setAttribute('d',el.getAttribute('d')); ol.setAttribute('class','mwsel');
+  if(pin&&pin.parentNode) pin.parentNode.insertBefore(ol,pin); else g.appendChild(ol); setTimeout(()=>{ try{ o.remove(); }catch(e){} },2400);
+}
 function updBoard(){
   if(shownBall===undefined) shownBall=ball; const bb=shownBall; const pin=$('#ballpin'); if(!pin||!bb) return;
   let ang, rr=50;
@@ -1493,7 +1511,7 @@ function speakNow(parts){   // parts: [[text, rate, pitch], ...]
           if(v) u.voice=v;
           if(i+1<parts.length&&typeof parts[i+1]==='number'){ let fd=false; const nx=()=>{ if(fd) return; fd=true; run(i+1); }; u.onend=nx; u.onerror=nx; setTimeout(nx,Math.min(9000,700+String(u.text).length*85/Math.max(.5,u.rate||1))); }   /* watchdog: some browsers never fire 'end', so the game must not wait for it */
           else if(i===parts.length-1){ u.onend=done; u.onerror=done; setTimeout(done,Math.min(9000,700+String(u.text).length*85/Math.max(.5,u.rate||1))+1200); }
-          window.__ccGQ=(window.__ccGQ||0)+1; u.onstart=function(){ window.__ccGS=(window.__ccGS||0)+1; }; const oe=u.onerror; u.onerror=function(e){ window.__ccGE=(e&&e.error)||'err'; if(oe) oe(e); };
+          window.__ccGQ=(window.__ccGQ||0)+1; u.onstart=function(){ window.__ccGS=(window.__ccGS||0)+1; }; if(typeof p[3]==='function'){ const cb=p[3], os=u.onstart; u.onstart=function(){ try{ cb(); }catch(e){} os(); }; } const oe=u.onerror; u.onerror=function(e){ window.__ccGE=(e&&e.error)||'err'; if(oe) oe(e); };
           speechSynthesis.speak(u);
           if(!(i+1<parts.length&&typeof parts[i+1]==='number')) run(i+1);
         };
@@ -2304,6 +2322,7 @@ async function deal(){
   const c1=hand[0], ev=(aSize(c1)===aSize(ball)||aPar(c1)===aPar(ball)||aCol(c1)===aCol(ball));
   curEv=ev;
   setWn('ROLL OR','NO ROLL');
+  mwFocus(true);   /* both small wheels grow and get their white frames while the dealer asks */
   const sp3=dealerSay('Is it roll or no roll?','Last round’s 3rd card was '+cardName(ball)+'. The 1st card was '+cardName(c1)+'.',[['Is it roll or no roll?',1,1.1]],'Roll or no roll?');
   await waitOrSkip(Promise.all([sleep(1300),sp3]));
   if(ev){ goN++; burnN=0; } else { burnN++; goN=0; }
@@ -2313,12 +2332,15 @@ async function deal(){
   const l1='Last round\u2019s 3rd card was '+J(wb), l2='Since this round\u2019s 1st card is '+J(wc1);
   const l3=ev?'they share '+same.join(' and '):'they share nothing', l4=ev?'and the ball rolls':'so there is no roll';
   const reason=l1+'. '+l2+', '+l3+', '+l4+'.';
-  ball=hand[2]; updBoard();
+  const ballPrev=ball; ball=hand[2]; updBoard();
   if(ev&&!skip){ $$('h1 .olg').forEach(e=>{ e.classList.remove('spin'); void e.getBoundingClientRect(); e.classList.add('spin'); setTimeout(()=>e.classList.remove('spin'),2800); }); }   // the ball rolls: both logos in the name spin and grow
   rnrSet(ev?1:0);
-  const sp4=dealerSay(ev?'BALL ROLLS':'NO ROLL',reason+(ev?' Rolls in a row: '+goN+'.':' No rolls in a row: '+burnN+'.'),[[l1,.9,1.05],500,[l2,.9,1.05],450,[l3,.9,1.05],400,[l4,.9,1.1]],ev?'The ball rolls!':'No roll!');
+  const fl={L:0,R:0}, fL=()=>{ if(fl.L) return; fl.L=1; mwFlash('ball',ballPrev); }, fR=()=>{ if(fl.R) return; fl.R=1; mwFlash('new',c1); };
+  setTimeout(fL,900); setTimeout(fR,4300);   /* backup timers for when the voice is off */
+  const sp4=dealerSay(ev?'BALL ROLLS':'NO ROLL',reason+(ev?' Rolls in a row: '+goN+'.':' No rolls in a row: '+burnN+'.'),[[l1,.9,1.05,fL],500,[l2,.9,1.05,fR],450,[l3,.9,1.05],400,[l4,.9,1.1]],ev?'The ball rolls!':'No roll!');
   say(ev?'BALL ROLLS ('+goN+' in a row)':'NO ROLL ('+burnN+' in a row)','');
   await waitOrSkip(Promise.all([sleep(2500),sp4]));
+  mwFocus(false);
   $$('#board .wedge').forEach(e=>e.classList.remove('wwin'));
   await settle(hand);
 }
@@ -3380,7 +3402,7 @@ setInterval(()=>{
 <script id="spk-test">
 /* Developer notes: artifact name and version first, then whatever helps when something does not work (speech status and the speech test ladder) */
 (function(){
-  var VER='v47';
+  var VER='v50';
   var box=document.createElement('details'); box.className='blist devnotes'; box.id='devnotes';
   box.innerHTML='<summary>Developer notes</summary><div class="dn-body"><div class="dn-head" id="dnHead"></div><pre class="dn-info" id="dnInfo"></pre>'
    +'<div class="dn-sub">Speech test <span>(each click tries the next way of speaking)</span></div><button type="button" class="ghost" id="spkTest">Speak test</button> <span class="dn-res" id="dnRes"></span></div>';
