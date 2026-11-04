@@ -1472,6 +1472,7 @@ function speakNow(parts){   // parts: [[text, rate, pitch], ...]
   let done; const pr=new Promise(r=>{ done=r; }); setTimeout(done,16000);
   try{
     let busy=false; try{ busy=speechSynthesis.speaking||speechSynthesis.pending; }catch(e){}
+    if(!window.__ccSpokeOnce){ window.__ccSpokeOnce=true; busy=true; }   /* first real line: always clear the engine, like cancel()-then-speak */
     if(busy) speechSynthesis.cancel(); try{ speechSynthesis.resume(); }catch(e){}
     const t0=Date.now(), tok=(window.__spTok=(window.__spTok||0)+1);
     const go=()=>{
@@ -1515,7 +1516,7 @@ window.__ccSayNow=function(txt){
       window.__ccVoiceName=v?v.name+(v.localService?' (local)':''):'default';
       u.onstart=function(){ window.__ccSpeechOK=true; };
       u.onerror=function(e){ window.__ccSpeechErr=(e&&e.error)||'error'; };
-      if(i>1){ try{ speechSynthesis.cancel(); }catch(e){} }
+      try{ speechSynthesis.cancel(); }catch(e){}   /* clear a stuck engine before every try (Chrome) */
       try{ speechSynthesis.resume(); }catch(e){}
       speechSynthesis.speak(u);
     }catch(e){ window.__ccSpeechErr=String(e&&e.message||e); }
@@ -3307,7 +3308,7 @@ setInterval(()=>{
     if(gestured) return; gestured=true; window.__ccGesture=true;
     if(!on) return;
     wake(false);
-    try{ if(window.speechSynthesis){ speechSynthesis.resume(); var u=new SpeechSynthesisUtterance('ready'); u.volume=0; u.lang='en-US'; speechSynthesis.speak(u); } }catch(e){}
+    try{ if(window.speechSynthesis){ speechSynthesis.resume(); var ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1); if(ios){ var u=new SpeechSynthesisUtterance('ready'); u.volume=0; u.lang='en-US'; speechSynthesis.speak(u); } } }catch(e){}   /* only iOS needs the silent primer; on desktop Chrome it can jam the queue */
     iosHint();
   }
   ['touchend','pointerup','click','mouseup','keydown'].forEach(function(t){ window.addEventListener(t,firstGesture,true); });
