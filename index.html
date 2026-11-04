@@ -3368,5 +3368,36 @@ setInterval(()=>{
   ui();
 })();
 </script>
+<script id="spk-test">
+/* plain speech test: exactly the cancel-then-speak recipe, started by a click */
+(function(){
+  if(!window.speechSynthesis||typeof SpeechSynthesisUtterance==='undefined') return;
+  function puhu(teksti,report){
+    const voices=window.speechSynthesis.getVoices();
+    window.speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(teksti);
+    let v=voices.find(x=>x.name.includes('Samantha'));
+    if(!v) v=voices.find(x=>x.lang.startsWith('en')&&(x.name.toLowerCase().includes('female')||x.name.toLowerCase().includes('zira')||x.name.toLowerCase().includes('google')));
+    if(!v) v=voices.find(x=>x.lang.startsWith('en'))||voices[0];
+    if(v) utterance.voice=v;
+    const nm=v?v.name:'default ('+voices.length+' voices)';
+    report('Voice: '+nm+' …');
+    let st=false;
+    utterance.onstart=function(){ st=true; report('Voice: '+nm+' – speaking'); };
+    utterance.onend=function(){ report('Voice: '+nm+' – done'); };
+    utterance.onerror=function(e){ report('Voice: '+nm+' – error: '+((e&&e.error)||'?')); };
+    window.speechSynthesis.speak(utterance);
+    setTimeout(function(){ if(!st) report('Voice: '+nm+' – did not start in 3 s'); },3000);
+  }
+  if(window.speechSynthesis.onvoiceschanged!==undefined) window.speechSynthesis.onvoiceschanged=function(){ window.speechSynthesis.getVoices(); };
+  window.speechSynthesis.getVoices();
+  var b=document.createElement('button'); b.type='button'; b.id='spkTest'; b.textContent='Speak test';
+  b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:60;font:600 12px system-ui,sans-serif;padding:7px 11px;border-radius:9px;border:1px solid #888;background:#fffdf4;color:#222;max-width:80vw;cursor:pointer;opacity:.92';
+  var tm; function report(t){ b.textContent=t; clearTimeout(tm); tm=setTimeout(function(){ b.textContent='Speak test'; },9000); }
+  b.addEventListener('click',function(e){ e.stopPropagation(); puhu('Hello, welcome to the game!',report); });
+  ['pointerdown','touchstart','mousedown'].forEach(function(t){ b.addEventListener(t,function(e){ e.stopPropagation(); },{passive:true}); });
+  document.body.appendChild(b);
+})();
+</script>
 </body></html>
 </body></html>
