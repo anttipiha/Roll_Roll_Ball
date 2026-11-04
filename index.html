@@ -1444,14 +1444,29 @@ let dealerVoice=null;
 function pickVoice(){
   if(!canSpeak) return null;
   if(dealerVoice) return dealerVoice;
-  const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)&&v.localService!==false);   // voices that live on the device first: a network voice is silent when the connection is poor
+  let all=[]; try{ all=speechSynthesis.getVoices()||[]; }catch(e){}
+  if(!all.length) return null;   // list not loaded yet: onvoiceschanged / the retry timer will call us again
   const NOV=/albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|junior|kathy|organ|ralph|superstar|trinoids|whisper|wobble|zarvox|fred|deranged|hysterical|pipe|grandma|grandpa|eddy|flo\b|reed|rocko|sandy|shelley|novelty/i;
-  const vs2=vs.filter(v=>!NOV.test(v.name)); const pool=vs2.length?vs2:vs;
-  const f=['samantha','alex','daniel','karen','moira','zira','aria','jenny','ava','allison','victoria','susan','hazel','tessa','serena','fiona','google us english','female'].map(n=>pool.filter(v=>v.name.toLowerCase().indexOf(n)>=0)[0]).filter(Boolean)[0];
-  if(f){ dealerVoice=f; return f; }   // cache only a real match, so a late-loading voice list can still improve it
-  return pool.filter(v=>/^en[-_]US/i.test(v.lang))[0]||pool[0]||null;
+  const en=all.filter(v=>/^en/i.test(v.lang)&&!NOV.test(v.name));
+  const loc=en.filter(v=>v.localService!==false), pool=loc.length?loc:en;
+  // stage 1: Samantha (Apple devices)
+  let v=all.filter(x=>x.name.indexOf('Samantha')>=0&&/^en/i.test(x.lang))[0]||all.filter(x=>x.name.indexOf('Samantha')>=0)[0];
+  // stage 1b: other good named voices
+  if(!v) v=['alex','daniel','karen','moira','zira','aria','jenny','ava','allison','victoria','susan','hazel','tessa','serena','fiona'].map(n=>pool.filter(x=>x.name.toLowerCase().indexOf(n)>=0)[0]).filter(Boolean)[0];
+  // stage 2: an English female / Zira / Google voice (Windows, Android, Chrome)
+  if(!v) v=en.filter(x=>{ const n=x.name.toLowerCase(); return n.indexOf('female')>=0||n.indexOf('zira')>=0||n.indexOf('google')>=0; })[0];
+  if(v){ dealerVoice=v; return v; }   // cache only a real match, so a late-loading voice list can still improve it
+  // stage 3: any English voice, else the device default
+  return pool.filter(x=>/^en[-_]US/i.test(x.lang))[0]||pool[0]||all.filter(x=>/^en/i.test(x.lang))[0]||all[0]||null;
 }
-if(canSpeak){ try{ speechSynthesis.addEventListener('voiceschanged',()=>{ dealerVoice=null; pickVoice(); }); }catch(e){} }
+if(canSpeak){
+  const reload=()=>{ dealerVoice=null; try{ pickVoice(); }catch(e){} };
+  try{ if(speechSynthesis.onvoiceschanged!==undefined) speechSynthesis.onvoiceschanged=reload; }catch(e){}
+  try{ speechSynthesis.addEventListener('voiceschanged',reload); }catch(e){}
+  reload();   // Safari and mobile have the list at once
+  // desktop Chrome fills the list in the background: keep asking for a few seconds (loading voices is not speaking, so no click is needed)
+  let vt=0; const vi=setInterval(()=>{ try{ if(speechSynthesis.getVoices().length||++vt>20){ clearInterval(vi); reload(); } }catch(e){ clearInterval(vi); } },250);
+}
 function speakNow(parts){   // parts: [[text, rate, pitch], ...]
   if(!canSpeak||!voiceOn||!window.__ccMaster||!window.__ccGesture) return Promise.resolve();
   let done; const pr=new Promise(r=>{ done=r; }); setTimeout(done,16000);
@@ -1462,7 +1477,7 @@ function speakNow(parts){   // parts: [[text, rate, pitch], ...]
     const go=()=>{
       if(tok!==window.__spTok) return;
       // voices load late on some browsers: wait briefly so the first line does not use the default (male) voice
-      if(!speechSynthesis.getVoices().length&&Date.now()-t0<1200){ setTimeout(go,100); return; }
+      if(!speechSynthesis.getVoices().length&&Date.now()-t0<2500){ setTimeout(go,100); return; }
       const v=pickVoice();
       try{
         const run=i=>{
