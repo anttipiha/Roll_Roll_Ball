@@ -13,6 +13,8 @@ body.fpflying #ready .wt{animation:none!important;opacity:0!important}
 .belowbar{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:12px 0 4px;padding-left:58px;min-height:46px}
 .belowbar .meters{margin-left:auto}
 </style>
+<style id="rr-css">.rr{margin:0 0 6px}.rr summary{list-style:revert;display:list-item;padding:11px 0;cursor:pointer}.rr:not([open]) summary{opacity:.95}.rr .readout{border:0;background:none;padding:0 0 10px;min-height:0}.cashrow:not(:has(button:not([hidden]))){display:none}</style>
+<style id="factnav-css">.factnav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:44px;height:44px;border-radius:50%;border:2px solid #ffe53b;background:rgba(10,4,32,.82);color:#ffe53b;font:700 30px/1 Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;padding:0 0 3px;cursor:pointer;transition:background .15s,opacity .15s}.factnav:hover:not(:disabled){background:#ffe53b;color:#0a0420}.factnav:disabled{opacity:.28;cursor:default}.factnav.fprev{left:8px}.factnav.fnext{right:8px}.stage.phone .factnav{width:34px;height:34px;font-size:24px;top:calc(50% - 4px)}.stage.phone .factnav.fprev{left:4px}.stage.phone .factnav.fnext{right:4px}</style>
 </head><body>
 <title>RollBall_Desktop_NOW</title>
 <style id="embedded-fonts">
@@ -264,7 +266,7 @@ td.n{font-family:var(--font-mono)}
 .bets{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start;gap:18px}
 .stage{position:relative;container-type:inline-size;width:100%;aspect-ratio:1600/1150;background:#12031d;border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
 #scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:manipulation}
-.sign{position:absolute;left:61%;width:32%;top:7.4%;text-align:center;font:400 3.1cqw/1.12 var(--font-display);color:#ffe53b;-webkit-text-stroke:.14cqw #1a0a00;paint-order:stroke fill;text-shadow:0 .3cqw 0 #000;text-transform:uppercase;white-space:pre-line;pointer-events:none;overflow-wrap:anywhere}
+.sign{position:absolute;left:61%;width:32%;top:7.4%;text-align:center;font:400 3.1cqw/1.12 var(--font-display);color:#ffe53b;-webkit-text-stroke:.14cqw #1a0a00;paint-order:stroke fill;text-shadow:0 .3cqw 0 #000;text-transform:uppercase;white-space:pre;pointer-events:none}   /* two rows at most: the script below shrinks the font until each row fits */
 .cashbar{position:absolute;left:36.5%;width:27%;bottom:4.6%;height:4.1%;display:flex;align-items:center;justify-content:center;gap:.9cqw;background:linear-gradient(#34308a,#1d1a5c);border:1px solid #4b46b5;font:400 1.9cqw/1 var(--font-body);color:#e6e3ff;letter-spacing:.02em;pointer-events:none;white-space:nowrap}
 .cashbar b{font-weight:500;color:#fff}
 .stage .voice{position:absolute;left:1.5%;top:2.05%;z-index:3;background:rgba(0,0,0,.5);font-size:clamp(10px,1.5cqw,13px)}
@@ -397,7 +399,7 @@ td.n{font-family:var(--font-mono)}
 .cbig-h{position:absolute;bottom:3%;left:0;right:0;text-align:center;color:#ddd;font:500 1.6cqw var(--font-body)}
 .stage.phone .cbig-c img{width:27cqw}.stage.phone .cbig-c{font-size:4cqw}.stage.phone .cbig-h{font-size:3cqw}
 /* ===== E2 values ===== */
-.cline{position:absolute;right:1.2%;left:auto;width:auto;top:18.7%;z-index:3;display:flex;justify-content:center;align-items:baseline;gap:.9cqw;padding:.45cqw .9cqw;background:rgba(10,4,20,.55);border:1px solid rgba(255,255,255,.18);border-radius:1.3cqw;opacity:0;transition:opacity .25s;pointer-events:none;font:400 2.35cqw/1 var(--font-display);color:#fff;-webkit-text-stroke:.12cqw #000;paint-order:stroke fill;text-shadow:0 .25cqw 0 #000}
+.cline{position:absolute;right:1.2%;left:auto;width:auto;top:21%;z-index:3;display:flex;justify-content:center;align-items:baseline;gap:.9cqw;padding:.45cqw .9cqw;background:rgba(10,4,20,.55);border:1px solid rgba(255,255,255,.18);border-radius:1.3cqw;opacity:0;transition:opacity .25s;pointer-events:none;font:400 2.35cqw/1 var(--font-display);color:#fff;-webkit-text-stroke:.12cqw #000;paint-order:stroke fill;text-shadow:0 .25cqw 0 #000}
 .cline.show{opacity:1}
 .cline em{font-style:normal;color:#ffe53b}
 .cline .cv .cs{font:700 1.05em Arial,'Segoe UI Symbol',sans-serif;margin-left:.08em;color:#fff}
@@ -752,7 +754,7 @@ body.phone h1{white-space:normal;font-size:24px}
         </svg>
         <div class="cline" id="cline" aria-live="polite"></div>
         <div class="refask" id="refask" hidden role="dialog" aria-label="Refill"><b>Do you want a refill?</b><div><button type="button" class="y" id="refYes">YES</button><button type="button" class="n" id="refNo">NO</button></div></div>
-        <div class="factfx" id="factfx" hidden title="Click to close"><svg id="factsvg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet"></svg><div class="factcap" id="factcap"></div><button class="factx" id="factx" type="button" aria-label="Close" title="Close">×</button></div>
+        <div class="factfx" id="factfx" hidden title="Click to close"><svg id="factsvg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet"></svg><div class="factcap" id="factcap"></div><button type="button" class="factnav fprev" id="factPrev" aria-label="Previous fun fact" title="Previous fun fact">&#8249;</button><button type="button" class="factnav fnext" id="factNext" aria-label="Next fun fact" title="Next fun fact">&#8250;</button><button class="factx" id="factx" type="button" aria-label="Close" title="Close">×</button></div>
         <div class="sign" id="dealerSay" aria-hidden="true">Ready</div>
         <div class="quote" id="dealerQuote" aria-hidden="true"></div>
         <aside class="paypanel pr" id="payPR" aria-label="Paytable, sector bets"><button type="button" class="pp-x" data-ppclose aria-label="Close paytable">&times;</button><h3>Paytable &ndash; winning number</h3><table id="payTR"></table></aside>
@@ -786,14 +788,15 @@ body.phone h1{white-space:normal;font-size:24px}
         </dl>
       </div>
       <div id="guideSlot"></div>
+      <details class="blist rr" id="recentRounds"><summary>Recent Rounds</summary>
       <div class="readout" aria-live="polite">
         <p class="why" id="dealerWhy"></p>
         <div class="verdict" id="verdict"></div>
         <div class="where" id="where">Place your bets, then press Deal.</div>
         <div class="net" id="net"></div>
         <div class="recent" id="recent"></div>
+      </div></details>
         <div class="cashrow"><button class="ghost" id="refill" type="button" hidden>Top up to 1,000</button><button class="ghost" id="leave" type="button" hidden>Leave the table (cash out)</button></div>
-      </div>
     </section>
 
     <section class="col bets" aria-label="Bets">
@@ -1463,6 +1466,7 @@ if(canSpeak){
   const reload=()=>{ dealerVoice=null; try{ pickVoice(); }catch(e){} };
   try{ if(speechSynthesis.onvoiceschanged!==undefined) speechSynthesis.onvoiceschanged=reload; }catch(e){}
   try{ speechSynthesis.addEventListener('voiceschanged',reload); }catch(e){}
+  window.__ccPickVoice=pickVoice;
   reload();   // Safari and mobile have the list at once
   // desktop Chrome fills the list in the background: keep asking for a few seconds (loading voices is not speaking, so no click is needed)
   let vt=0; const vi=setInterval(()=>{ try{ if(speechSynthesis.getVoices().length||++vt>20){ clearInterval(vi); reload(); } }catch(e){ clearInterval(vi); } },250);
@@ -1800,12 +1804,14 @@ FXD.intro=()=>{
   FACTS.forEach((t,i)=>{ KEY.forEach(k=>{ if(k[0].test(t)) FXD[i]=A[k[1]]; }); });
 })();
 
-function tellFact(){
+let factHist=[], factPos=-1;
+function tellFact(nav){
   if(factsReady()<=0||phase!=='idle'||tableBusy) return;
   tourCancel();
-  const intro=!introSeen();
-  if(!intro&&!factBag.length){ factBag=FACTS.map((_,i)=>i).filter(i=>FACTS.length<2||i!==factLast); for(let i=factBag.length-1;i>0;i--){ const j=rnd(i+1); [factBag[i],factBag[j]]=[factBag[j],factBag[i]]; } }
-  const idx=intro?'intro':factBag.pop(), f=intro?INTRO_TEXT:FACTS[idx]; if(intro) introMark(); else factLast=idx; stats.factUsed=(stats.factUsed||0)+1;
+  let forced=null; if(nav==="prev"){ if(factPos<=0) return; forced=factHist[--factPos]; } else if(nav==="next"&&factPos<factHist.length-1){ forced=factHist[++factPos]; }
+  const intro=forced!==null?forced==='intro':(nav?false:!introSeen());
+  if(forced===null&&!intro&&!factBag.length){ factBag=FACTS.map((_,i)=>i).filter(i=>FACTS.length<2||i!==factLast); for(let i=factBag.length-1;i>0;i--){ const j=rnd(i+1); [factBag[i],factBag[j]]=[factBag[j],factBag[i]]; } }
+  const idx=forced!==null?forced:intro?'intro':factBag.pop(), f=intro?INTRO_TEXT:FACTS[idx]; if(intro) introMark(); else factLast=idx; stats.factUsed=(stats.factUsed||0)+1; if(forced===null){ factHist.length=factPos+1; factHist.push(idx); factPos=factHist.length-1; } { const pb=$('#factPrev'); if(pb) pb.disabled=factPos<=0; }
   const D=intro?8000:Math.max(8500,3500+70*f.length);
   save(); updateFact(); sfx('click'); factHold=Date.now()+D+600;
   const ph=$('#stage').classList.contains('phone')&&!!FXD[idx];
@@ -1813,6 +1819,9 @@ function tellFact(){
   $('#factcap').textContent=intro?'':f; $('#factcap').style.display=intro?'none':'';
   if(factShow(idx)){ const tok=++factTok; Promise.all([sp,new Promise(r=>setTimeout(r,D))]).then(()=>{ if(tok===factTok) factClose(); }); }
 }
+$('#factPrev').addEventListener('click',e=>{ e.stopPropagation(); tellFact('prev'); });
+$('#factNext').addEventListener('click',e=>{ e.stopPropagation(); tellFact('next'); });
+document.addEventListener('keydown',e=>{ const fx=$('#factfx'); if(!fx||fx.hidden) return; if(e.key==='ArrowLeft'){ tellFact('prev'); } else if(e.key==='ArrowRight'){ tellFact('next'); } });
 
 function openDev(){
   if(phase!=='idle'||tableBusy) return;
@@ -3369,34 +3378,71 @@ setInterval(()=>{
 })();
 </script>
 <script id="spk-test">
-/* plain speech test: exactly the cancel-then-speak recipe, started by a click */
+/* Developer notes: artifact name and version first, then whatever helps when something does not work (speech status and the speech test ladder) */
 (function(){
-  if(!window.speechSynthesis||typeof SpeechSynthesisUtterance==='undefined') return;
-  function puhu(teksti,report){
-    const voices=window.speechSynthesis.getVoices();
-    window.speechSynthesis.cancel();
-    const utterance=new SpeechSynthesisUtterance(teksti);
-    let v=voices.find(x=>x.name.includes('Samantha'));
-    if(!v) v=voices.find(x=>x.lang.startsWith('en')&&(x.name.toLowerCase().includes('female')||x.name.toLowerCase().includes('zira')||x.name.toLowerCase().includes('google')));
-    if(!v) v=voices.find(x=>x.lang.startsWith('en'))||voices[0];
-    if(v) utterance.voice=v;
-    const nm=v?v.name:'default ('+voices.length+' voices)';
-    report('Voice: '+nm+' …');
-    let st=false;
-    utterance.onstart=function(){ st=true; report('Voice: '+nm+' – speaking'); };
-    utterance.onend=function(){ report('Voice: '+nm+' – done'); };
-    utterance.onerror=function(e){ report('Voice: '+nm+' – error: '+((e&&e.error)||'?')); };
-    window.speechSynthesis.speak(utterance);
-    setTimeout(function(){ if(!st) report('Voice: '+nm+' – did not start in 3 s'); },3000);
+  var VER='v47';
+  var box=document.createElement('details'); box.className='blist devnotes'; box.id='devnotes';
+  box.innerHTML='<summary>Developer notes</summary><div class="dn-body"><div class="dn-head" id="dnHead"></div><pre class="dn-info" id="dnInfo"></pre>'
+   +'<div class="dn-sub">Speech test <span>(each click tries the next way of speaking)</span></div><button type="button" class="ghost" id="spkTest">Speak test</button> <span class="dn-res" id="dnRes"></span></div>';
+  var foot=document.querySelector('p.foot'); if(foot&&foot.parentNode) foot.parentNode.insertBefore(box,foot); else document.body.appendChild(box);
+  var st=document.createElement('style'); st.textContent='.devnotes{margin:6px 0}.devnotes summary{list-style:revert;display:list-item;padding:11px 0;cursor:pointer}.dn-body{padding:2px 0 14px;font-size:13px}.dn-head{font:700 14px var(--font-mono,monospace);margin-bottom:6px}.dn-info{margin:0 0 12px;padding:10px 12px;background:var(--panel,#fff);border:1px solid var(--line,#ddd);border-radius:10px;white-space:pre-wrap;word-break:break-word;font:12px/1.55 var(--font-mono,monospace)}.dn-sub{font-weight:600;margin:4px 0 6px}.dn-sub span{font-weight:400;color:var(--muted,#777)}.dn-res{font:12px var(--font-mono,monospace);margin-left:6px}'; document.head.appendChild(st);
+  var ss=window.speechSynthesis, step=0, can=!!ss&&typeof SpeechSynthesisUtterance!=='undefined';
+  function g(f,d){ try{ var v=f(); return v===undefined||v===null||v===''?d:v; }catch(e){ return d; } }
+  function info(){
+    document.getElementById('dnHead').textContent=document.title+'  ·  '+VER;
+    var vs=can?(ss.getVoices()||[]):[], pv=g(function(){ return typeof window.__ccPickVoice==='function'?window.__ccPickVoice():null; },null);
+    var L=[];
+    L.push('Layout: '+(document.body.classList.contains('phone')?'phone':'desktop')+'  ·  stage '+g(function(){ return document.getElementById('stage').clientWidth; },'?')+' px  ·  window '+innerWidth+'×'+innerHeight);
+    L.push('Browser: '+navigator.userAgent.replace(/^Mozilla\/5\.0 /,''));
+    L.push('Speech: '+(can?'supported':'NOT supported')+'  ·  voices '+vs.length+'  ·  chosen '+(pv?pv.name+(pv.localService===false?' (network)':' (local)'):'none yet'));
+    L.push('Sound switch: '+(window.__ccMaster?'on':'off')+'  ·  page clicked: '+(window.__ccGesture?'yes':'no')+'  ·  audio '+g(function(){ return window.__ccAcState(); },'?'));
+    L.push('Game speech: queued '+(window.__ccGQ||0)+'  ·  started '+(window.__ccGS||0)+'  ·  last error '+(window.__ccGE||'none'));
+    L.push('Speaker check: '+(window.__ccSpeechOK?'speech started':'not confirmed')+(window.__ccSpeechErr?'  ·  '+window.__ccSpeechErr:'')+(window.__ccVoiceName?'  ·  tried '+window.__ccVoiceName:''));
+    document.getElementById('dnInfo').textContent=L.join('\n');
   }
-  if(window.speechSynthesis.onvoiceschanged!==undefined) window.speechSynthesis.onvoiceschanged=function(){ window.speechSynthesis.getVoices(); };
-  window.speechSynthesis.getVoices();
-  var b=document.createElement('button'); b.type='button'; b.id='spkTest'; b.textContent='Speak test';
-  b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:60;font:600 12px system-ui,sans-serif;padding:7px 11px;border-radius:9px;border:1px solid #888;background:#fffdf4;color:#222;max-width:80vw;cursor:pointer;opacity:.92';
-  var tm; function report(t){ b.textContent=t; clearTimeout(tm); tm=setTimeout(function(){ b.textContent='Speak test'; },9000); }
-  b.addEventListener('click',function(e){ e.stopPropagation(); puhu('Hello, welcome to the game!',report); });
+  var tm,iv; box.addEventListener('toggle',function(){ clearInterval(iv); if(box.open){ info(); iv=setInterval(info,1500); } });
+  function report(t){ var r=document.getElementById('dnRes'); r.textContent=t; clearTimeout(tm); tm=setTimeout(function(){ r.textContent=''; },15000); }
+  function run(){
+    if(!can){ report('speech not supported in this browser'); return; }
+    window.__ccSpeechOK=true; window.__spTok=(window.__spTok||0)+1;   /* keep the game itself quiet so nothing cancels the test */
+    var vs=ss.getVoices()||[], en=vs.filter(function(v){ return /^en/i.test(v.lang); });
+    var sam=vs.filter(function(v){ return v.name.indexOf('Samantha')>=0; })[0];
+    var plan=[{n:'A default voice',v:null,cancel:false,lang:false},{n:'B default voice, en-US',v:null,cancel:false,lang:true},{n:'C Samantha',v:sam||null,cancel:false,lang:false},{n:'D Samantha after cancel+300ms',v:sam||null,cancel:true,lang:false}];
+    en.forEach(function(v){ if(v!==sam) plan.push({n:'E '+v.name+(v.localService===false?' (net)':''),v:v,cancel:false,lang:false}); });
+    var p=plan[step%plan.length]; step++;
+    var tag='['+step+'/'+plan.length+'] '+p.n+' · '+vs.length+' voices';
+    report(tag+' …');
+    function go(){
+      var u=new SpeechSynthesisUtterance('Hello, welcome to the game!'), started=false;
+      if(p.v) u.voice=p.v; if(p.lang) u.lang='en-US';
+      u.onstart=function(){ started=true; report(tag+' – SPEAKING'); };
+      u.onend=function(){ report(tag+' – done'); };
+      u.onerror=function(e){ report(tag+' – error: '+((e&&e.error)||'?')); };
+      ss.speak(u);
+      setTimeout(function(){ if(!started) report(tag+' – did not start in 3 s (speaking='+ss.speaking+' pending='+ss.pending+' paused='+ss.paused+')'); },3000);
+    }
+    if(p.cancel){ ss.cancel(); setTimeout(go,300); } else go();
+  }
+  var b=document.getElementById('spkTest'); b.addEventListener('click',function(e){ e.stopPropagation(); run(); });
   ['pointerdown','touchstart','mousedown'].forEach(function(t){ b.addEventListener(t,function(e){ e.stopPropagation(); },{passive:true}); });
-  document.body.appendChild(b);
+  if(can){ if(ss.onvoiceschanged!==undefined) ss.onvoiceschanged=function(){ ss.getVoices(); }; ss.getVoices(); }
+  info();
+})();
+</script>
+<script id="sign-fit">
+(function(){
+  var el=document.getElementById('dealerSay'); if(!el) return; var busy=false;
+  function fit(){
+    if(busy) return; busy=true;
+    try{
+      el.style.fontSize='';
+      var base=parseFloat(getComputedStyle(el).fontSize)||24, fs=base, n=0;
+      while(el.scrollWidth>el.clientWidth+1&&fs>base*0.55&&n++<30){ fs-=base*0.03; el.style.fontSize=fs+'px'; }
+    }catch(e){}
+    busy=false;
+  }
+  try{ new MutationObserver(fit).observe(el,{childList:true,characterData:true,subtree:true}); }catch(e){}
+  window.addEventListener('resize',fit); fit();
 })();
 </script>
 </body></html>
